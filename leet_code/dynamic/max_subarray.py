@@ -2,19 +2,33 @@ from typing import List
 
 
 def max_subarray(nums: List[int]) -> int:
-    l = 0
-    best_sum = nums[0]
-    while l < len(nums) - 1:
-        cur_sum = nums[l]
-        for r in range(l+1, len(nums)):
-            next_sum = cur_sum + nums[r]
-            if next_sum >= cur_sum:
-                cur_sum = next_sum
-            else:
-                l = r
-                break
-        best_sum = max(best_sum, cur_sum)
-        l += 1
+    n = len(nums)
+    best_sum = total_sum = sum(nums)
+
+    for left in range(0, n):
+        if total_sum > best_sum:
+            best_sum = total_sum
+        cur_sum = total_sum
+        for right in range(n-1, left, -1):
+            cur_sum -= nums[right]
+            if cur_sum > best_sum:
+                best_sum = cur_sum
+
+        total_sum -= nums[left]
+    return best_sum
+
+
+def maxSubArray(nums: List[int]) -> int:
+    best_sum = - 10**4
+    cur_sum = - 10**4
+    for x in nums:
+        if cur_sum <= 0:
+            cur_sum = x
+        else:
+            cur_sum += x
+        if cur_sum > best_sum:
+            best_sum = cur_sum
+
     return best_sum
 
 
@@ -26,9 +40,14 @@ def test(f, nums, max_sum):
 
 
 if __name__ == '__main__':
-    test(max_subarray, [0], 0)
-    test(max_subarray, [1, 2, 3], 6)
-    test(max_subarray, [1, 2, -9, 3, 4], 7)
-    test(max_subarray, [4, 2, -9, 3, 2], 6)
     # todo fix testcase
-    test(max_subarray, [-2, 1, -3, 4, -1, 2, 1, -5, 4], 6)
+    f = maxSubArray
+    test(f, [-2, 1, -3, 4, -1, 2, 1, -5, 4], 6)
+    test(f, [-1, -2, -3, 1, -4], 1)
+    test(f, [-1, -2, -3, -1, -4], -1)
+    test(f, [-2, 1], 1)
+    test(f, [0], 0)
+    test(f, [1, 2, -9, 3, 4], 7)
+    test(f, [1, 2, 3], 6)
+    test(f, [4, 2, -9, 3, 2], 6)
+    test(f, [-2, 1, -3, 4, -1, 2, 1, -5, 4], 6)
